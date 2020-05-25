@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        ports:
+            - "80:80"
+        networks:
+            - backend
+        volumes:
+            - $APP_ROOT:/var/www/html
+            - ./nginx/conf:/etc/nginx/conf.d
+            - ./nginx/logs:/var/log/nginx/
+        depends_on:
+            - api
+
+    api:
+        build: ./php
+        container_name: api
+        networks:
+            - backend
+        volumes:
+            - $APP_ROOT:/var/www/html
+        environment:
+            XDEBUG_CONFIG: remote_host=host.docker.internal
+            PHP_IDE_CONFIG: serverName=api
+networks:
+    backend:
